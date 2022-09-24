@@ -1,0 +1,144 @@
+.recentPositions {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+  margin: 0 40px;
+  align-items: center;
+}
+
+.recentPositions h2 {
+  font-weight: 700;
+  font-size: 45px;
+}
+
+.filters {
+  display: flex;
+  gap: 20px;
+  width: 830px;
+}
+
+.filters button {
+  border: solid 2px #fff;
+  flex: 1 1 0;
+  width: 0;
+  height: 71px;
+  background: rgba(255, 255, 255, 0);
+  outline: none;
+  font-weight: 700;
+  font-size: 30px;
+  color: #fff;
+  cursor: pointer;
+  transition: all 200ms ease;
+}
+
+.filters button:active {
+  background: rgba(255, 255, 255, 1);
+}
+
+.filters button:hover {
+  background: rgba(255, 255, 255, 0.5);
+}
+
+.positionsContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+  align-items: center;
+}
+
+.positionsList {
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 830px;
+}
+
+.position {
+  border: 2px solid #fff;
+  border-radius: 40px;
+  overflow: hidden;
+  display: flex;
+  height: 150px;
+}
+
+.positionNft {
+  width: 225px;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.positionDescription {
+  padding: 20px 60px 20px 20px;
+  flex: 1 1 0;
+  width: 0;
+}
+
+.positionTitle {
+  font-weight: 700;
+  font-size: 24px;
+}
+
+.positionOpeningDate {
+  font-weight: 400;
+  font-size: 24px;
+}
+
+.createdBy {
+  margin-top: 15px;
+  font-weight: 400;
+  font-size: 24px;
+  color: black;
+}
+
+.positionContainer {
+  position: relative;
+}
+
+.arrowButton {
+  background: #fff278;
+  cursor: pointer;
+  width: 50px;
+  height: 50px;
+  border-radius: 50px;
+  position: absolute;
+  right: -20px;
+  top: 50%;
+  margin-top: -25px;
+  z-index: 1;
+}
+.arrowBar {
+  background: #000;
+  width: 15px;
+  height: 3px;
+  top: 50%;
+  left: 50%;
+  margin: -1px 0 0 -8px;
+  position: absolute;
+}
+.arrowTip1,
+.arrowTip2 {
+  background: #000;
+  height: 3px;
+  width: 8px;
+  rotate: 45deg;
+  position: absolute;
+  margin-top: -2px;
+  right: -1px;
+}
+.arrowTip2 {
+  rotate: -45deg;
+  margin-top: 2px;
+}
+
+.loadMore {
+  background: #fff278;
+  border-radius: 60px;
+  outline: none;
+  border: none;
+  padding: 10px 40px;
+  font-size: 25px;
+  cursor: pointer;
+  font-weight: 700;
+}

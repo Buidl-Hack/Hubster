@@ -1,0 +1,96 @@
+{
+  "name": "nextjs",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "yarn build-contract && next dev",
+    "build": "yarn build-contract && next build",
+    "start": "next start",
+    "lint": "next lint",
+    "build-contract": "yarn build-abi && yarn build-abi-types",
+    "build-abi": "npx solc --abi --include-path node_modules/ --base-path . contracts/Hubster.sol -o public/ --pretty-json",
+    "build-abi-types": "npx typechain --target=ethers-v5 --out-dir . 'public/contracts_Hubster_sol_Hubster.abi' && cp public/contracts_Hubster_sol_Hubster.abi ./contracts_Hubster_sol_Hubster.json"
+  },
+  "dependencies": {
+    "@rainbow-me/rainbowkit": "^0.6.0",
+    "@worldcoin/id": "^0.8.0",
+    "ethers": "^5.7.1",
+    "ipfs-http-client": "^58.0.1",
+    "next": "12.3.0",
+    "nextjs-progressbar": "^0.0.14",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "react-tooltip": "^4.2.21",
+    "wagmi": "^0.6.6"
+  },
+  "devDependencies": {
+    "@next/eslint-plugin-next": "^12.3.0",
+    "@nomiclabs/hardhat-ethers": "^2.1.1",
+    "@nomiclabs/hardhat-etherscan": "^3.1.0",
+    "@openzeppelin/contracts": "^4.7.3",
+    "@truffle/hdwallet-provider": "^2.0.15",
+    "@typechain/ethers-v5": "^10.1.0",
+    "@types/node": "18.7.18",
+    "@types/react": "^18.0.20",
+    "@types/react-dom": "^18.0.6",
+    "@typescript-eslint/eslint-plugin": "^5.37.0",
+    "@typescript-eslint/parser": "^5.37.0",
+    "dotenv": "^16.0.2",
+    "eslint": "^8.23.1",
+    "eslint-config-next": "12.3.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "hardhat": "^2.11.2",
+    "hardhat-dependency-compiler": "^1.1.3",
+    "hardhat-gas-reporter": "^1.0.9",
+    "prettier": "^2.7.1",
+    "solc": "^0.8.17",
+    "solidity-coverage": "^0.8.2",
+    "ts-node": "^10.9.1",
+    "typechain": "^8.1.0",
+    "typescript": "^4.8.3"
+  },
+  "prettier": {
+    "semi": true,
+    "trailingComma": "all",
+    "singleQuote": true,
+    "printWidth": 80
+  },
+  "eslintConfig": {
+    "root": true,
+    "parser": "@typescript-eslint/parser",
+    "plugins": [
+      "@typescript-eslint",
+      "prettier"
+    ],
+    "rules": {
+      "no-console": 1,
+      "prettier/prettier": 0,
+      "@typescript-eslint/no-floating-promises": 0,
+      "@typescript-eslint/no-misused-promises": 0,
+      "@typescript-eslint/no-unsafe-assignment": 0,
+      "@typescript-eslint/no-unsafe-call": 0,
+      "@typescript-eslint/no-unsafe-member-access": 0,
+      "react/no-unescaped-entities": 0
+    },
+    "ignorePatterns": [],
+    "extends": [
+      "eslint:recommended",
+      "plugin:@typescript-eslint/recommended",
+      "plugin:@typescript-eslint/recommended-requiring-type-checking",
+      "prettier",
+      "next",
+      "next/core-web-vitals",
+      "plugin:@next/next/recommended"
+    ],
+    "parserOptions": {
+      "project": [
+        "./tsconfig.json"
+      ]
+    },
+    "env": {
+      "browser": true,
+      "node": true
+    }
+  }
+}

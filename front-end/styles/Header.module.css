@@ -1,0 +1,36 @@
+.header {
+  display: flex;
+  padding: 20px 40px;
+  justify-content: space-between;
+  align-items: center;
+}
+.addressButton {
+  display: flex;
+  gap: 30px;
+  overflow: hidden;
+  outline: none;
+  background: none;
+  border: solid 2px #fff;
+  border-radius: 100px;
+  color: #fff;
+  font-weight: 400;
+  font-size: 24px;
+}
+.addressButton a {
+  padding: 10px 0 10px 30px;
+  text-decoration: none;
+  color: #fff;
+}
+
+.logOut {
+  color: #fff;
+  cursor: pointer;
+  font-weight: 400;
+  font-size: 24px;
+  background: none;
+  border: none;
+  padding: 10px 20px 10px 15px;
+  border-left: solid 2px #fff;
+  outline: none;
+  cursor: pointer;
+}
