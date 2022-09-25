@@ -14,7 +14,7 @@ Hubster is a web3 LinkedIn. The logic is as follows:
 
 ## Tech stack
 
-The dApp leverages Worlcoin, Polygon, NFTPort and IPFS.
+The dApp leverages Worlcoin, Polygon, and IPFS.
 
 The full tech stack comprises
 
