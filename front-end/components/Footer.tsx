@@ -8,7 +8,7 @@ export default function Footer() {
         <img src="/ethglobal.svg" alt="ethglobal" />
         <img src="/polygon.svg" alt="ethglobal" />
         <img src="/worldcoin.svg" alt="ethglobal" />
-        <img src="/nftport.svg" alt="ethglobal" />
+        {/* <img src="/nftport.svg" alt="ethglobal" /> */}
         <img src="/ipfs.svg" alt="ethglobal" />
         {/* <img src="/xmtp.svg" alt="ethglobal" /> */}
       </div>
