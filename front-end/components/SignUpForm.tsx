@@ -1,5 +1,6 @@
 import { VerificationResponse, WidgetProps } from '@worldcoin/id';
 import { utils } from 'ethers';
+import { create } from 'ipfs-http-client';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
 import { ChangeEvent, useEffect, useState } from 'react';
@@ -10,7 +11,13 @@ import {
   useContractWrite,
   usePrepareContractWrite,
 } from 'wagmi';
-import { ABI, MUMBAI_CONTRACT, OPTIONS } from '../constants';
+import {
+  ABI,
+  API_SECRET,
+  MUMBAI_CONTRACT,
+  OPTIONS,
+  PROJECT_ID,
+} from '../constants';
 import style from '../styles/SignUpForm.module.css';
 import { shorten } from '../utils';
 
@@ -91,6 +98,9 @@ export const SignUpForm = () => {
   const router = useRouter();
   const [response, setResponse] = useState<IVerifyArgs>();
   const [isVerified, setVerified] = useState(false);
+  const [CID, setCID] = useState<string>();
+  const [hasRequestedNFT, requestProfileNFT] = useState(false);
+  const [hasRequestedVerify, requestVerify] = useState(false);
   useContractEvent({
     addressOrName: MUMBAI_CONTRACT,
     contractInterface: ABI,
@@ -99,6 +109,13 @@ export const SignUpForm = () => {
       console.info('Event: ProofVerified');
       setVerified(true);
     },
+  });
+  const { data: hasProfileNft } = useContractRead({
+    addressOrName: MUMBAI_CONTRACT,
+    contractInterface: ABI,
+    functionName: 'hasProfileNft',
+    args: [address],
+    enabled: address !== undefined,
   });
   const { data: verifiedOnContract } = useContractRead({
     addressOrName: MUMBAI_CONTRACT,
@@ -111,12 +128,23 @@ export const SignUpForm = () => {
     addressOrName: MUMBAI_CONTRACT,
     contractInterface: ABI,
     functionName: 'mintProfileNft',
-    args: [address, 'hello'],
-    enabled: address !== undefined,
+    args: [address, CID],
+    enabled: address !== undefined && CID !== undefined,
     overrides: {
       gasLimit: utils.parseEther('0.00000000001'),
     },
   });
+  const { config: localMintConfig, error: localMintError } =
+    usePrepareContractWrite({
+      addressOrName: MUMBAI_CONTRACT,
+      contractInterface: ABI,
+      functionName: 'localMintProfile',
+      args: [address, CID],
+      enabled: address !== undefined && CID !== undefined,
+      overrides: {
+        gasLimit: utils.parseEther('0.00000000001'),
+      },
+    });
   const { config: verifyConfig, error: verifyError } = usePrepareContractWrite({
     addressOrName: MUMBAI_CONTRACT,
     contractInterface: ABI,
@@ -133,6 +161,7 @@ export const SignUpForm = () => {
     },
   });
   const mint = useContractWrite(mintConfig);
+  const localMint = useContractWrite(localMintConfig);
   const verify = useContractWrite(verifyConfig);
   const [name, setName] = useState('');
   const [role, setRole] = useState('');
@@ -140,6 +169,7 @@ export const SignUpForm = () => {
   const [exp, setExp] = useState('');
   const [interests, setInterests] = useState('');
   const [web3, setWeb3] = useState('');
+  const [isUseWorldcoin, setUseWorldcoin] = useState(true);
   const applyName = (e: ChangeEvent<HTMLInputElement>) =>
     setName(e.currentTarget.value);
   const applyRole = (e: ChangeEvent<HTMLSelectElement>) =>
@@ -155,6 +185,7 @@ export const SignUpForm = () => {
   useEffect(() => {
     if (address === undefined) {
       router.push('/connect');
+      return;
     }
     if ((verifiedOnContract as any) === true) {
       console.info(
@@ -163,17 +194,43 @@ export const SignUpForm = () => {
       );
       setVerified(true);
     }
-    if (response !== undefined) {
-      console.info('Calling verifyAndExecute');
-      // const client = create('https://ipfs.infura.io:5001/api/v0');
-      const fetchData = async () => {
-        // const added = await client.add(file)
-        // const url = `https://ipfs.infura.io/ipfs/${added.path}`
-      };
-      verify.write?.();
-      fetchData();
+    if (response !== undefined && !hasRequestedVerify) {
+      console.info('Calling verifyAndExecute with', address, response);
+      if (verify.write !== undefined) {
+        verify.write();
+        requestVerify(true);
+      }
     }
-  }, [verifiedOnContract, response, verify, address, router]);
+    if ((hasProfileNft as any) === true) {
+      console.log('has profile nft');
+      router.push('/profile');
+      return;
+    }
+    if (CID !== undefined && hasRequestedNFT) {
+      if (isUseWorldcoin) {
+        console.log('Calling mintProfileNft with CID', CID);
+        mint.write?.();
+      } else {
+        console.log('Calling localMintProfile with CID', CID);
+        localMint.write?.();
+      }
+      requestProfileNFT(false);
+    }
+  }, [
+    verifiedOnContract,
+    response,
+    verify,
+    address,
+    router,
+    hasProfileNft,
+    mint,
+    localMint,
+    isUseWorldcoin,
+    CID,
+    hasRequestedNFT,
+    requestProfileNFT,
+    hasRequestedVerify,
+  ]);
   if (address === undefined) {
     return null;
   }
@@ -216,7 +273,7 @@ export const SignUpForm = () => {
           options={OPTIONS.interests}
         />
         <FormItemInput label="wallet" input={shorten(address, 5)} />
-        {!isVerified && (
+        {!isVerified && isUseWorldcoin && (
           <div className={style.formItemWide}>
             <WorldIDWidget
               actionId="wid_staging_4e245125700e19e33721f5a0ed5afc46"
@@ -238,13 +295,53 @@ export const SignUpForm = () => {
             />
           </div>
         )}
+        {isUseWorldcoin && (
+          <div className={style.formItemWide}>
+            <button
+              className={style.mint}
+              onClick={() => setUseWorldcoin(false)}
+            >
+              Skip worldcoin
+            </button>
+          </div>
+        )}
         <div className={style.formItemWide}>
           <button
             className={style.mint}
-            disabled={!isVerified}
+            disabled={!isVerified && isUseWorldcoin}
             onClick={() => {
-              console.info('Calling mintProfileNft');
-              mint.write?.();
+              const fetchData = async () => {
+                const auth =
+                  'Basic ' +
+                  Buffer.from(`${PROJECT_ID}:${API_SECRET}`).toString('base64');
+                const client = create({
+                  host: 'ipfs.infura.io',
+                  port: 5001,
+                  protocol: 'https',
+                  headers: {
+                    authorization: auth,
+                  },
+                });
+                const file = new File(
+                  [
+                    JSON.stringify({
+                      name,
+                      role,
+                      role2,
+                      web3,
+                      interests,
+                      exp,
+                    }),
+                  ],
+                  'data.json',
+                );
+                console.log('Storing data on IPFS');
+                const { path } = await client.add(file);
+                console.log('Received CID for IPFS: ', path);
+                setCID(path);
+                requestProfileNFT(true);
+              };
+              fetchData();
             }}
           >
             Mint my profile

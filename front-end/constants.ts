@@ -1,7 +1,11 @@
 import abi from './contracts_Hubster_sol_Hubster.json';
 
-export const MUMBAI_CONTRACT = '0x97712d536983FCfCc992a4CEC8aE1cDC746278ce';
+export const MUMBAI_CONTRACT = '0x1D58712dbe59A27a18db8e2D82eeA8347784c722';
 export const ABI = abi;
+export const PROJECT_ID = process.env
+  .NEXT_PUBLIC_INFURA_IPFS_PROJECT_ID as string;
+export const API_SECRET = process.env
+  .NEXT_PUBLIC_INFURA_IPFS_API_SECRET as string;
 export const OPTIONS = {
   roles: [
     { text: 'Blockchain dev', value: 'blockchain-dev' },
